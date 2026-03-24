@@ -3,12 +3,16 @@ AFRAME.registerComponent('basketball-play', {
         //Take the characters for the scene
         this.attacker = document.querySelector('#attacker')
         this.defender = document.querySelector('#defender')
+        this.ball = document.querySelector('#ball')
 
         //Take the attacker pieces
         this.leftArm = document.querySelector('#left-arm-container')
         this.rightArm = document.querySelector('#righ-arm-container')
         this.leftLeg = document.querySelector('#left-leg-container')
         this.rightLeg = document.querySelector('#right-leg-container')
+        
+        // Take the ball
+        this.ball = document.querySelector('#ball')
 
         //Player's status
         this.attackerIsMovement = false;
@@ -22,12 +26,12 @@ AFRAME.registerComponent('basketball-play', {
         }, 2000)
 
         this.attacker.addEventListener('animationcomplete__movement', () => {
-            this.staticDribling()
+            this.crossSecuence()
         })
 
-        setTimeout(() => {
-            this.crossSecuence()
-        }, 2000)
+        this.attacker.addEventListener('animation__cross__complete', () => {
+            this.secondDriblingSecuence()
+        })
     },
 
     staticDribling : function() {
@@ -46,6 +50,14 @@ AFRAME.registerComponent('basketball-play', {
                 loop: true,
                 dir: 'alternate'
             })
+
+        this.ball.setAttribute('animation__ball', {
+            property: 'position',
+            from: '-1.0 1.1 -4.95141', 
+            to: '-1.0 0.5 -4.95141', 
+            loop: true, 
+            dir: 'alternate'
+        })
 
         if(!this.attackerIsMovement){
             //Check if the player isn't moving
@@ -71,7 +83,7 @@ AFRAME.registerComponent('basketball-play', {
                     property: 'position', 
                     to: '0 0.05 0', 
                     dur: 1000, 
-                    dir: 'alternate',
+                    dir: 'alternate', 
                     loop: true, 
                     easing: 'easeInOutQuad'
                 })
@@ -87,7 +99,6 @@ AFRAME.registerComponent('basketball-play', {
         this.rightLeg.removeAttribute('animation__static__right__leg')
 
         if(this.attackerIsMovement){
-
                 //first movement
                 this.attacker.setAttribute('animation__movement', {
                     property: 'position', 
@@ -124,7 +135,46 @@ AFRAME.registerComponent('basketball-play', {
                     loop: true
                 });
         }
-
-        this.attackerIsMovement = false
     },
+
+    crossSecuence : function(){
+        this.attackerIsMovement = true
+
+        //Remove the last animations in scene
+        this.rightArm.removeAttribute('animation__dribling')
+        this.leftArm.removeAttribute('animation__dribling')
+        this.leftLeg.removeAttribute('animation__left__walk')
+        this.rightLeg.removeAttribute('animation__right__walk')
+        
+        this.rightArm.setAttribute('position', '-1 0 0')
+        this.leftArm.setAttribute('position', '1 0.30') 
+
+        //Prepare the arms position for the cross
+        this.rightArm.setAttribute('rotation', '0.182 -6.374 -6')
+        this.leftArm.setAttribute('rotation', '-3.58 3.64 12.3')
+
+
+        //start the cross movement
+        this.ball.setAttribute('animation__cross__half', {
+            property: 'position',
+            from: '-0.8 1.1 -4.95141',  
+            to: '0.5 0.69 -4.3',  
+            dur: 1000,
+            delay: 1000,
+            easing: 'easeInOutQuad'
+        })
+
+        this.ball.setAttribute('animation__cross__complete', {
+            property: 'position',
+            from: '0.5 0.69 -4.3',  
+            to: '1.2 1.4 -4.95141',  
+            dur: 1000,
+            delay: 1000,
+            easing: 'easeInOutQuad'
+        })
+    }
+
+
+
+
 })
