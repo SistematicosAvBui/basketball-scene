@@ -223,6 +223,7 @@ AFRAME.registerComponent('basketball-play', {
             from: '1.2 1.4 -4.95141', 
             to: '1.2 0.5 -4.95141',
             dir: 'alternate',
+            dur: 600,
             loop: true
 
         })
@@ -238,12 +239,12 @@ AFRAME.registerComponent('basketball-play', {
         })
 
         this.rightLeg.setAttribute('animation__right__walk', {
-                property: 'position', 
-                from: '0 0 0.15',
-                to: '0 0 -0.15', 
-                dur: 500,
-                dir: 'alternate', 
-                loop: true
+            property: 'position', 
+            from: '0 0 0.15',
+            to: '0 0 -0.15', 
+            dur: 500,
+            dir: 'alternate', 
+            loop: true
         })
 
         //right arm movement
@@ -263,7 +264,73 @@ AFRAME.registerComponent('basketball-play', {
         this.rightArm.removeAttribute('animation__movement')
         this.leftLeg.removeAttribute('animation__left__walk')
         this.rightLeg.removeAttribute('animation__right__walk')
-        
+
+        //legs do two steps before the basket
+        this.rightLeg.setAttribute('animation__right__entry', {
+            property: 'position', 
+            from: '0 0 0.15',
+            to: '0 0 -0.15',
+            dur: 1000
+        })
+
+        this.leftLeg.setAttribute('animation__left__walk', {
+            property: 'position',
+            from: '0 0 -0.15',
+            to: '0 0 0.15', 
+            delay: 1000,
+            dur: 1000,
+        })
+
+        this.rightLeg.addEventListener('animationcomplete__right__entry', () => {
+            this.ball.removeAttribute('animation__ball')
+            this.ball.removeAttribute('animation__drible')
+            this.ball.setAttribute('animation__pre-shot', {
+                property: 'position', 
+                from: '0.54 1.2 -5', 
+                to: '0.9 3.3 -4.9'
+            })
+        })
+
+        //prepare the arm to shot
+        this.leftArm.setAttribute('animation__pre__shot', {
+            property: 'position',
+            to: '2.65 2.715 0', 
+            dur: 1000, 
+        })
+
+        this.leftArm.setAttribute('animation__shot', {
+            property: 'rotation',
+            to: '8.97 4.2 132.5', 
+            dur: 1000, 
+        })
+
+        //time to shot
+
+        this.attacker.setAttribute('animation__jump', {
+            property: 'position',
+            to: '-3 1.5 13', 
+            dur: 1000,
+            easing: 'easeInOutQuad'
+        })
+
+        this.ball.addEventListener('animationcomplete__pre__shot', () => {
+
+            this.ball.setAttribute('animation__shot', {
+                property: 'position', 
+                to: '2.9 7.1 -3.1', 
+                dur: 1000, 
+            })
+            
+            this.ball.setAttribute('animation__shot__finish', {
+                property: 'position', 
+                to: '2.9 7.1 -3.1', 
+                delay: 1000, 
+                dur: 1000
+                
+            })
+            
+        })
+
     }
 
 })
