@@ -32,6 +32,10 @@ AFRAME.registerComponent('basketball-play', {
         this.ball.addEventListener('animationcomplete__cross__complete', () => {
             this.secondDriblingSecuence()
         })
+
+        this.attacker.addEventListener('animationcomplete__go__basket', () => {
+            this.shotToBasket()
+        })
     },
 
     staticDribling : function() {
@@ -109,8 +113,8 @@ AFRAME.registerComponent('basketball-play', {
 
             this.leftArm.setAttribute('animation__dribling', {
                 property: 'position', 
-                from: '0 0 -0.2',
-                to: '0 0 0.2', 
+                from: '0 -0.08 -0.2',
+                to: '0 0.08 0.2', 
                 dur: 800, 
                 dir: 'alternate',
                 loop: true, 
@@ -197,16 +201,20 @@ AFRAME.registerComponent('basketball-play', {
         this.attacker.setAttribute('animation__entry__area', {
             property: 'position', 
             from: '-10 0 10',
-            to: '-7.5 0 7.5',
+            to: '-3 0 12',
             dur: 5000, 
-            delay: 1000
+            easing: 'easeInOutQuad'
         })
 
-        this.attacker.setAttribute('animation__go__basket', {
-            property: 'position', 
-            from: '-7.5 0 7.5',
-            to: '-7.5 0 15', 
-            dur: 2500, 
+        this.attacker.addEventListener('animationcomplete__entry__area', () => {
+
+            this.attacker.setAttribute('animation__go__basket', {
+                property: 'position', 
+                from: '-3 0 12',
+                to: '-3 0 13', 
+                dur: 2500, 
+                easing: 'easeInOutQuad'
+            })
         })
 
         //ball's drible
@@ -237,6 +245,25 @@ AFRAME.registerComponent('basketball-play', {
                 dir: 'alternate', 
                 loop: true
         })
+
+        //right arm movement
+        this.rightArm.setAttribute('animation__movement', {
+            property: 'position', 
+            from: '0 -0.08 -0.2',
+            to: '0 0.08 0.2', 
+            dur: 1000, 
+            dir: 'alternate', 
+            loop: true
+        })
+    },
+
+
+    shotToBasket : function(){
+        this.leftArm.removeAttribute('animation__dribling')
+        this.rightArm.removeAttribute('animation__movement')
+        this.leftLeg.removeAttribute('animation__left__walk')
+        this.rightLeg.removeAttribute('animation__right__walk')
+        
     }
 
 })
